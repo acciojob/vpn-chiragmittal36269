@@ -19,7 +19,7 @@ public class User {
 
     private String maskedIp;
 
-    private boolean connected;
+    private boolean connected = false;
 
     @ManyToMany
     @JoinColumn
