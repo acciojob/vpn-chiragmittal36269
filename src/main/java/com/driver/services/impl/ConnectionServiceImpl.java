@@ -33,10 +33,10 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         countryName = countryName.toUpperCase();
         User user = userRepository2.findById(userId).get();
-        if (user.isConnected()) {
+        if (user.getConnected()) {
             throw new Exception("Already connected");
         }
-        String currentCountry = String.valueOf(user.getCountry().getCountryName());
+        String currentCountry = String.valueOf(user.getOriginalCountry().getCountryName());
         if (currentCountry.equals(countryName)) {
             return user;
         }
@@ -110,7 +110,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     public User disconnect(int userId) throws Exception {
 
         User user = userRepository2.findById(userId).get();
-        if(!user.isConnected())
+        if(!user.getConnected())
         {
             throw new Exception("Already disconnected");
         }
