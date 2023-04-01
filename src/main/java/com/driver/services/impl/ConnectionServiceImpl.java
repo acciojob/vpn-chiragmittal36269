@@ -110,7 +110,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     public User disconnect(int userId) throws Exception {
 
         User user = userRepository2.findById(userId).get();
-        if(!user.getConnected())
+        if(!user.getConnected() || user.getMaskedIp() == null)
         {
             throw new Exception("Already disconnected");
         }
