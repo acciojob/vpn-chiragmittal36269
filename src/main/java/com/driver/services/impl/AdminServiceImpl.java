@@ -29,9 +29,7 @@ public class AdminServiceImpl implements AdminService {
         admin.setUsername(username);
         admin.setPassword(password);
 
-        Admin updatedAdmin = adminRepository1.save(admin);
-
-        return updatedAdmin;
+        return adminRepository1.save(admin);
     }
 
     @Override
@@ -52,12 +50,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception {
         String s = countryName.toUpperCase();
-        boolean marker = true;
-        if (s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN")) {
-            marker = true;
-        } else {
-            marker = false;
-        }
+        boolean marker;
+        marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
 
         if (!marker) {
             throw new Exception("Country not found");
