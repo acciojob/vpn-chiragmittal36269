@@ -122,27 +122,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         user.setMaskedIp(null);
         user.setConnected(false);
-//        String s = user.getOriginalIp();
-//        switch (s) {
-//            case "001":
-//                user.getCountry().setCountryName(CountryName.IND);
-//                break;
-//            case "002":
-//                user.getCountry().setCountryName(CountryName.USA);
-//                break;
-//            case "003":
-//                user.getCountry().setCountryName(CountryName.AUS);
-//                break;
-//            case "004":
-//                user.getCountry().setCountryName(CountryName.CHI);
-//                break;
-//            default:
-//                user.getCountry().setCountryName(CountryName.JPN);
-//                break;
-//        }
 
-        userRepository2.save(user);
-        return user;
+        return userRepository2.save(user);
     }
 
     @Override
