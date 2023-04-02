@@ -33,7 +33,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         countryName = countryName.toUpperCase();
         User user = userRepository2.findById(userId).get();
-        if (user.getConnected()) {
+        if (user.getConnected() || user.getMaskedIp()!=null) {
             throw new Exception("Already connected");
         }
         String currentCountry = String.valueOf(user.getOriginalCountry().getCountryName());

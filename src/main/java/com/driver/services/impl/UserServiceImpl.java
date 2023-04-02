@@ -24,13 +24,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(String username, String password, String countryName) throws Exception{
 
-        String s = countryName.toUpperCase();
-        boolean marker;
-        marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
+//        String s = countryName.toUpperCase();
+//        boolean marker;
+//        marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
+//
+//        if (!marker) {
+//            throw new Exception("Country not found");
+//        }
+        String countryNameCaps = countryName.toUpperCase();
+        if (!countryNameCaps.equals("IND") && !countryNameCaps.equals("USA") && !countryNameCaps.equals("AUS") && !countryNameCaps.equals("CHI") && !countryNameCaps.equals("JPN")) throw new Exception("Country not found");
 
-        if (!marker) {
-            throw new Exception("Country not found");
-        }
 
         Country country = new Country();
 
@@ -63,7 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setPassword(password);
         user.setOriginalIp(country.getCode()+"."+user.getId());
-//        user.setConnected(false);
+        user.setConnected(false);
         user.setMaskedIp(null);
 
         country.setUser(user);

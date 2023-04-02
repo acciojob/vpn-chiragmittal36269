@@ -49,13 +49,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception {
-        String s = countryName.toUpperCase();
-        boolean marker;
-        marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
+        String countryNameUpperCase = countryName.toUpperCase();
+//        boolean marker;
+//        marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
+//
+//        if (!marker) {
+//            throw new Exception("Country not found");
+//        }
 
-        if (!marker) {
-            throw new Exception("Country not found");
-        }
+        if (!countryNameUpperCase.equals("IND") && !countryNameUpperCase.equals("USA") && !countryNameUpperCase.equals("AUS") && !countryNameUpperCase.equals("CHI") && !countryNameUpperCase.equals("JPN")) throw new Exception("Country not found");
+        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
+
 
         Country country = new Country();
 
@@ -84,11 +88,12 @@ public class AdminServiceImpl implements AdminService {
 
         country.setCountryName(CountryName.valueOf(countryName));
         country.setCode(CountryName.valueOf(countryName).toCode());
+        country.setServiceProvider(serviceProvider);
 
-        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
+//        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
         serviceProvider.getCountryList().add(country);
 
-        country.setServiceProvider(serviceProvider);
+
 
         return serviceProviderRepository1.save(serviceProvider);
     }
