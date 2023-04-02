@@ -56,7 +56,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception {
-        String countryNameUpperCase = countryName.toUpperCase();
+        String s = countryName.toUpperCase();
         boolean marker;
         marker = s.equals("IND") || s.equals("USA") || s.equals("AUS") || s.equals("CHI") || s.equals("JPN");
 
@@ -71,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
 
         Country country = new Country();
 
-        switch (countryNameUpperCase) {
+        switch (s) {
             case "IND":
                 country.setCountryName(CountryName.IND);
                 country.setCode(CountryName.IND.toCode());
