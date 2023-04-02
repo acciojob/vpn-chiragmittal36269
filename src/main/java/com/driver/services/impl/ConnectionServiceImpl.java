@@ -33,7 +33,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         countryName = countryName.toUpperCase();
         User user = userRepository2.findById(userId).get();
-        if (user.getConnected() || user.getMaskedIp()!=null) {
+        if (user.getConnected() || user.getMaskedIp() != null) {
             throw new Exception("Already connected");
         }
         String currentCountry = String.valueOf(user.getOriginalCountry().getCountryName());
@@ -44,9 +44,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 //        {
 //            return user;
 //        }
-        if(user.getServiceProviderList() == null) {
-            throw new Exception("Unable to connect");
-        }
+//        if(user.getServiceProviderList() == null) {
+//            throw new Exception("Unable to connect");
+//        }
 
         List<ServiceProvider> updatedServiceProvider = new ArrayList<>();
         boolean marker = true;
@@ -94,24 +94,29 @@ public class ConnectionServiceImpl implements ConnectionService {
 //                break;
 //        }
         Connection connection = new Connection();
-        connection.setServiceProvider(realProvider);
         connection.setUser(user);
-
-        user.setMaskedIp(country.getCode() + "." + realProvider.getId() + "." + user.getId());
         user.setConnected(true);
-        user.getConnectionList().add(connection);
+        List<Connection> connectionList = user.getConnectionList();
+        connectionList.add(connection);
+        user.setConnectionList(connectionList);
+        connection.setServiceProvider(realProvider);
+
+
+        user.setMaskedIp(new String(country.getCode() + "." + realProvider.getId() + "." + user.getId()));
 
         realProvider.getConnectionList().add(connection);
 
         serviceProviderRepository2.save(realProvider);
-        return userRepository2.save(user);
+        userRepository2.save(user);
+
+        return user;
     }
+
     @Override
     public User disconnect(int userId) throws Exception {
 
         User user = userRepository2.findById(userId).get();
-        if(!user.getConnected() || user.getMaskedIp() == null)
-        {
+        if (!user.getConnected() || user.getMaskedIp() == null) {
             throw new Exception("Already disconnected");
         }
 
@@ -136,18 +141,44 @@ public class ConnectionServiceImpl implements ConnectionService {
 //                break;
 //        }
 
-        return userRepository2.save(user);
+        userRepository2.save(user);
+        return user;
     }
+
     @Override
     public User communicate(int senderId, int receiverId) throws Exception {
-        User sender;
-        User receiver;
+        User receiver = userRepository2.findById(receiverId).get();
+        CountryName receiverCountryName = null;
+        if (receiver.getConnected()) {
+            String maskedCode = receiver.getMaskedIp().substring(0, 3);
+            switch (maskedCode) {
+                case "001":
+                    receiverCountryName = CountryName.IND;
+                    break;
+                case "002":
+                    receiverCountryName = CountryName.USA;
+                    break;
+                case "003":
+                    receiverCountryName = CountryName.AUS;
+                    break;
+                case "004":
+                    receiverCountryName = CountryName.CHI;
+                    break;
+                case "005":
+                    receiverCountryName = CountryName.JPN;
+                    break;
+
+            }
+        } else {
+            receiverCountryName = receiver.getOriginalCountry().getCountryName();
+        }
+
+        User user = null;
         try {
-            sender = userRepository2.findById(senderId).get();
-            receiver = userRepository2.findById(receiverId).get();
+            user = connect(senderId, receiverCountryName.toString());
         } catch (Exception e) {
             throw new Exception("Cannot establish communication");
         }
-        return sender;
+        return user;
     }
 }

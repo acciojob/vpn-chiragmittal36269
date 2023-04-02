@@ -11,6 +11,8 @@ import com.driver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -37,36 +39,38 @@ public class UserServiceImpl implements UserService {
 
         Country country = new Country();
 
-//        switch (s) {
+//        switch (countryNameCaps) {
 //            case "IND":
 //                country.setCountryName(CountryName.IND);
-//                country.setCode("001");
+//                country.setCode(CountryName.IND.toCode());
 //                break;
 //            case "USA":
 //                country.setCountryName(CountryName.USA);
-//                country.setCode("002");
+//                country.setCode(CountryName.USA.toCode());
 //                break;
 //            case "AUS":
 //                country.setCountryName(CountryName.AUS);
-//                country.setCode("003");
+//                country.setCode(CountryName.AUS.toCode());
 //                break;
 //            case "CHI":
 //                country.setCountryName(CountryName.CHI);
-//                country.setCode("004");
+//                country.setCode(CountryName.CHI.toCode());
 //                break;
-//            default:
+//            case "JPN":
 //                country.setCountryName(CountryName.JPN);
-//                country.setCode("005");
+//                country.setCode(CountryName.JPN.toCode());
 //                break;
+//            default :
+//                throw new Exception("Country not found");
 //        }
+
+
         country.setCountryName(CountryName.valueOf(countryName));
         country.setCode(CountryName.valueOf(countryName).toCode());
 
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        userRepository3.save(user);
-        user.setOriginalIp(country.getCode()+"."+user.getId());
         user.setConnected(false);
         user.setMaskedIp(null);
 
@@ -74,7 +78,12 @@ public class UserServiceImpl implements UserService {
 
         user.setOriginalCountry(country);
 
-        return userRepository3.save(user);
+        userRepository3.save(user);
+        user.setOriginalIp(user.getOriginalCountry().getCode()+"."+user.getId());
+
+        userRepository3.save(user);
+
+        return user;
     }
 
     @Override
@@ -83,9 +92,13 @@ public class UserServiceImpl implements UserService {
         ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
         User user = userRepository3.findById(userId).get();
 
-        serviceProvider.getUsers().add(user);
+        List<User> userList = serviceProvider.getUsers();
+        userList.add(user);
+        serviceProvider.setUsers(userList);
 
-        user.getServiceProviderList().add(serviceProvider);
+        List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
+        serviceProviderList.add(serviceProvider);
+        user.setServiceProviderList(serviceProviderList);
 
         serviceProviderRepository3.save(serviceProvider);
 

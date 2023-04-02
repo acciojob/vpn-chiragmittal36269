@@ -11,6 +11,8 @@ import com.driver.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AdminServiceImpl implements AdminService {
     @Autowired
@@ -29,7 +31,9 @@ public class AdminServiceImpl implements AdminService {
         admin.setUsername(username);
         admin.setPassword(password);
 
-        return adminRepository1.save(admin);
+        adminRepository1.save(admin);
+
+        return admin;
     }
 
     @Override
@@ -39,12 +43,15 @@ public class AdminServiceImpl implements AdminService {
 
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setName(providerName);
-
-        admin.getServiceProviders().add(serviceProvider);
-
         serviceProvider.setAdmin(admin);
 
-        return adminRepository1.save(admin);
+        List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
+        serviceProviderList.add(serviceProvider);
+        admin.setServiceProviders(serviceProviderList);
+
+        adminRepository1.save(admin);
+
+        return admin;
     }
 
     @Override
@@ -58,42 +65,44 @@ public class AdminServiceImpl implements AdminService {
 //        }
 
         if (!countryNameUpperCase.equals("IND") && !countryNameUpperCase.equals("USA") && !countryNameUpperCase.equals("AUS") && !countryNameUpperCase.equals("CHI") && !countryNameUpperCase.equals("JPN")) throw new Exception("Country not found");
-        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
 
+
+        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
 
         Country country = new Country();
 
-//        switch (s) {
+//        switch (countryNameUpperCase) {
 //            case "IND":
 //                country.setCountryName(CountryName.IND);
-//                country.setCode("001");
+//                country.setCode(CountryName.IND.toCode());
 //                break;
 //            case "USA":
 //                country.setCountryName(CountryName.USA);
-//                country.setCode("002");
+//                country.setCode(CountryName.USA.toCode());
 //                break;
 //            case "AUS":
 //                country.setCountryName(CountryName.AUS);
-//                country.setCode("003");
+//                country.setCode(CountryName.AUS.toCode());
 //                break;
 //            case "CHI":
 //                country.setCountryName(CountryName.CHI);
-//                country.setCode("004");
+//                country.setCode(CountryName.CHI.toCode());
 //                break;
-//            default:
+//            case "JPN":
 //                country.setCountryName(CountryName.JPN);
-//                country.setCode("005");
+//                country.setCode(CountryName.JPN.toCode());
 //                break;
+//            default :
+//                throw new Exception("Country not found");
 //        }
 
         country.setCountryName(CountryName.valueOf(countryName));
         country.setCode(CountryName.valueOf(countryName).toCode());
         country.setServiceProvider(serviceProvider);
 
-//        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
-        serviceProvider.getCountryList().add(country);
-
-
+        List<Country> countryList = serviceProvider.getCountryList();
+        countryList.add(country);
+        serviceProvider.setCountryList(countryList);
 
         return serviceProviderRepository1.save(serviceProvider);
     }
