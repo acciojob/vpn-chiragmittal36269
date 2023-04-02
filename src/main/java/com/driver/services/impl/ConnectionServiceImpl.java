@@ -102,7 +102,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         connection.setServiceProvider(realProvider);
 
 
-        user.setMaskedIp(new String(country.getCode() + "." + realProvider.getId() + "." + user.getId()));
+        user.setMaskedIp(country.getCode() + "." + realProvider.getId() + "." + user.getId());
 
         realProvider.getConnectionList().add(connection);
 
@@ -123,7 +123,8 @@ public class ConnectionServiceImpl implements ConnectionService {
         user.setMaskedIp(null);
         user.setConnected(false);
 
-        return userRepository2.save(user);
+        userRepository2.save(user);
+        return user;
     }
 
     @Override
